@@ -24,10 +24,10 @@ public class Partie {
     // liste de joueurs
     private ArrayList<Joueur> joueurs;
     // liste de series
-    private ArrayList<Série> séries;
+    private ArrayList<SÃ©rie> sÃ©ries;
     // la pioche
     private ArrayList<Carte> cartes;
-    // hashmap des cartes choises et leur joueur (reinitialisé a chaque tour)
+    // hashmap des cartes choises et leur joueur (reinitialisÃ© a chaque tour)
     private HashMap<Carte,Joueur> cartesChoisies;
     
     public Partie(ArrayList<String> listeJoueurs){
@@ -35,7 +35,7 @@ public class Partie {
     	initialiserJoueurs(listeJoueurs);
         initialiserCartes();
         distribuer();
-        initialiserséries();
+        initialisersÃ©ries();
         cartesChoisies= new HashMap<>();
     } 
     
@@ -57,11 +57,11 @@ public class Partie {
     }
     
     /**
-     * Initialise la liste de séries
+     * Initialise la liste de sÃ©ries
     */
-    private void initialiserséries() {
-    	séries = new ArrayList<Série>();
-        for(int i=0;i<NB_SERIES;i++) séries.add(new Série(derniereCartePioche()));
+    private void initialisersÃ©ries() {
+    	sÃ©ries = new ArrayList<SÃ©rie>();
+        for(int i=0;i<NB_SERIES;i++) sÃ©ries.add(new SÃ©rie(derniereCartePioche()));
     }
     
     /**
@@ -87,12 +87,10 @@ public class Partie {
     }
     
     /**
-     * Permet de jouer une partie entière du jeu et retourne true si la partie est complétée
-     * @return vrai si la partie est complétée
+     * Permet de jouer une partie entiÃ¨re du jeu
     */
-    public boolean jouer() {
+    public void jouer() {
     	System.out.println(this);
-        int nbToursComplets = 0;
     	for (int tours=0;tours<NB_TOURS;tours++) {
             for (int j=0;j<joueurs.size();j++) {
             	System.out.print("A "+joueurs.get(j)+ " de jouer.\n");
@@ -104,11 +102,9 @@ public class Partie {
                 Console.clearScreen();
             }
             rangementSeries();
-            nbToursComplets++;
         }
         System.out.print(scoreFinal());
         sc.close();
-        return (nbToursComplets == NB_TOURS);
     }
     
     /**
@@ -121,13 +117,13 @@ public class Partie {
     }
     
     /**
-     * Verifie si la carte peut etre posée dans au moins une serie de la partie
+     * Verifie si la carte peut etre posÃ©e dans au moins une serie de la partie
      * @param numero de la carte
-     * @return vrai si la carte peut etre posée dans au moins une serie de la partie
+     * @return vrai si la carte peut etre posÃ©e dans au moins une serie de la partie
     */
     private boolean carteValide(Carte c) {
     	boolean estValide=false;
-    	for (Série sr : séries) {
+    	for (SÃ©rie sr : sÃ©ries) {
     		if (sr.getDerniereCarte().estPlusPetit(c)) estValide=true;
     	}
     	return estValide;
@@ -138,7 +134,7 @@ public class Partie {
     */
     private void rangementSeries() {
     	ArrayList<Integer> numCartes = new ArrayList<>();
-    	for (Carte c : cartesChoisies.keySet()) numCartes.add(c.getNuméro());
+    	for (Carte c : cartesChoisies.keySet()) numCartes.add(c.getNumÃ©ro());
     	Collections.sort(numCartes);
     	for (int num : numCartes) {
     		// on parcourt les cartes choisies par les joueurs au tour actuel
@@ -147,13 +143,13 @@ public class Partie {
     				Joueur joueur=cartesChoisies.get(c);
         			if(carteValide(c)) {
                         int idxSerie =serieAPoser(c);
-            			// si la série n'est pas pleine on ajoute la carte sinon on remplace la série
-                        if (!séries.get(idxSerie).estPleine()) séries.get(idxSerie).ajouter(c);
+            			// si la sÃ©rie n'est pas pleine on ajoute la carte sinon on remplace la sÃ©rie
+                        if (!sÃ©ries.get(idxSerie).estPleine()) sÃ©ries.get(idxSerie).ajouter(c);
                         else remplacerSerie(idxSerie,joueur);
         			}
         			else {
         				System.out.println(cartesAPoser());
-            			System.out.println("Pour poser la carte " + c.getNuméro() + ", " + joueur + " doit choisir la série qu'il va ramasser.");
+            			System.out.println("Pour poser la carte " + c.getNumÃ©ro() + ", " + joueur + " doit choisir la sÃ©rie qu'il va ramasser.");
             			System.out.print(afficherSeries());
             	    	System.out.print("Saisissez votre choix : ");
         				remplacerSerie(choixDeSerie()-1,joueur);
@@ -169,21 +165,21 @@ public class Partie {
     }
     
     /**
-     * Retourne l'index de la série ou la carte doit etre posée
+     * Retourne l'index de la sÃ©rie ou la carte doit etre posÃ©e
      * @return l'index
     */
     private int serieAPoser(Carte c) {
-    	// si une carte peut etre posee dans une série on remplace false par 
+    	// si une carte peut etre posee dans une sÃ©rie on remplace false par 
 		// true a la position correspondant a celle de la serie
 		boolean[] table= {false,false,false,false};
 		for (int i=0;i<NB_SERIES;i++) {
-			table[i]= séries.get(i).peutEtrePosee(c);
+			table[i]= sÃ©ries.get(i).peutEtrePosee(c);
 		}
 		// on calcule ensuite les differences entre la carte et la derniere carte de chaque serie
 		// pour recuperer la serie qui a la plus petite difference avec la carte
 		int[] differences= {MAX_DIFFERENCE,MAX_DIFFERENCE,MAX_DIFFERENCE,MAX_DIFFERENCE};
 		for (int i=0;i<NB_SERIES;i++) {
-			if (table[i]) differences[i]=c.difference(séries.get(i).getDerniereCarte());
+			if (table[i]) differences[i]=c.difference(sÃ©ries.get(i).getDerniereCarte());
 		}
        return indexValeurMin(differences);
     }
@@ -207,7 +203,7 @@ public class Partie {
     private void remplacerSerie(int idxSerie,Joueur j) {
     	for (Carte c: cartesChoisies.keySet()) {
     		if (cartesChoisies.get(c).toString().equals(j.toString())) {
-    			ArrayList<Carte> cartes = new ArrayList<> (séries.get(idxSerie).remplacer(c));
+    			ArrayList<Carte> cartes = new ArrayList<> (sÃ©ries.get(idxSerie).remplacer(c));
     			for (Carte cte : cartes) cartesChoisies.get(c).ramasser(cte);
     			break;
     		}
@@ -215,7 +211,7 @@ public class Partie {
     }
     
     /**
-     * Reinitialise les cartes posees par les joueurs ainsi que les points qu'ils ont ramassé
+     * Reinitialise les cartes posees par les joueurs ainsi que les points qu'ils ont ramassÃ©
     */
     private void nouveauTour() {
     	cartesChoisies.clear();
@@ -223,7 +219,7 @@ public class Partie {
     }
     
     /**
-     * Trie les joueurs en fonction des points qu'ils ont ramassé pendant le tour en cours
+     * Trie les joueurs en fonction des points qu'ils ont ramassÃ© pendant le tour en cours
     */
 	private static void triJoueursPoints(Joueur[] joueurs) {
 	    int i, j;
@@ -253,23 +249,23 @@ public class Partie {
 	}
 
 	/**
-     * Trie les joueurs en fonction des pénalités qu'ils ont recuperés
+     * Trie les joueurs en fonction des pÃ©nalitÃ©s qu'ils ont recuperÃ©s
     */
-    private static void triJoueursPénalités(Joueur[] joueurs) {
+    private static void triJoueursPÃ©nalitÃ©s(Joueur[] joueurs) {
 	    int i, j;
 	    Joueur tmp;
 	    if (joueurs.length > 1) {
 		    for (i = 1; i < joueurs.length; i++) {
 		        Joueur joueur = joueurs[i];
 		        j = i;
-                while (j > 0 && (joueurs[j - 1].getPénalités() > joueur.getPénalités())) {
+                while (j > 0 && (joueurs[j - 1].getPÃ©nalitÃ©s() > joueur.getPÃ©nalitÃ©s())) {
 		            tmp = joueurs[j];
 		            joueurs[j] = joueurs[j - 1];
 		            joueurs[j - 1] = tmp;
 		            j--;
 		        }
 		        joueurs[j] = joueur;
-		        while(j>0 && joueurs[j - 1].getPénalités() == joueur.getPénalités()) {
+		        while(j>0 && joueurs[j - 1].getPÃ©nalitÃ©s() == joueur.getPÃ©nalitÃ©s()) {
 		            if (joueurs[j - 1].toString().compareTo(joueur.toString()) > 0) {
 		                tmp = joueurs[j];
 		                joueurs[j] = joueurs[j - 1];
@@ -282,7 +278,7 @@ public class Partie {
 	}
     
     /**
-     * Retourne une chaine de caracteres contenant les nombres de tetes de boeufs que les joueurs ont ramassées pendant un tour
+     * Retourne une chaine de caracteres contenant les nombres de tetes de boeufs que les joueurs ont ramassÃ©es pendant un tour
      * @return chaine de caracteres
     */
     private String tetesDeBoeufs() {
@@ -292,13 +288,13 @@ public class Partie {
 			if (joueurs.get(i).getNbTetes()>0) arrayJ.add(joueurs.get(i));
 		}
 		Joueur[] listeJ = arrayJ.toArray(new Joueur[0]);
-		if (listeJ.length==0) return "Aucun joueur ne ramasse de tête de boeufs.\n";
+		if (listeJ.length==0) return "Aucun joueur ne ramasse de tÃªte de boeufs.\n";
 		triJoueursPoints(listeJ);
 		for (int i=0;i<listeJ.length;i++) {
 			Joueur j = listeJ[i];
-			s.append(j + " a ramassé ");
-			if (j.getNbTetes()==1) s.append("1 tête de boeufs\n");
-			else s.append(j.getNbTetes() + " têtes de boeufs\n");
+			s.append(j + " a ramassÃ© ");
+			if (j.getNbTetes()==1) s.append("1 tÃªte de boeufs\n");
+			else s.append(j.getNbTetes() + " tÃªtes de boeufs\n");
 		}
 		return s.toString();
 	}
@@ -307,7 +303,7 @@ public class Partie {
      * Retourne le numero de la carte choisie par le joueur
      * @param index du joueur qui doit choisir une carte
      * @param la partie
-     * @return numéro de la carte
+     * @return numÃ©ro de la carte
     */
     private int choixDeCarte(int idxJoueur){
         boolean choix =false;
@@ -330,7 +326,7 @@ public class Partie {
     
     /**
      * Retourne le numero de la serie choisie par le joueur
-     * @return numéro de la serie
+     * @return numÃ©ro de la serie
     */
     private static int choixDeSerie() {
     	boolean choix =false;
@@ -341,10 +337,10 @@ public class Partie {
                 	choix=true;
                 	return nombre;
                 }
-                else System.out.print("Ce n€'est pas une série valide, saisissez votre choix : ");
+                else System.out.print("Ce nÂ€'est pas une sÃ©rie valide, saisissez votre choix : ");
             }
             else {
-                System.out.print("Ce n'est pas une série valide, saisissez votre choix : ");
+                System.out.print("Ce n'est pas une sÃ©rie valide, saisissez votre choix : ");
                 sc.next();
             }
         }
@@ -352,29 +348,29 @@ public class Partie {
     }
 
     /**
-     * Retourne une chaine de caracteres contenant les nombres de tetes de boeufs que les joueurs ont ramassées a la fin de la partie
+     * Retourne une chaine de caracteres contenant les nombres de tetes de boeufs que les joueurs ont ramassÃ©es a la fin de la partie
      * @return chaine de caracteres
     */
     private String scoreFinal(){
         StringBuilder s = new StringBuilder ("** Score final\n");
         Joueur[] Liste = joueurs.toArray(new Joueur[0]);
-        triJoueursPénalités(Liste);
+        triJoueursPÃ©nalitÃ©s(Liste);
         for (int i=0; i<joueurs.size() ;i++){
-            s.append(Liste[i].toString() + " a ramassé " + Liste[i].getPénalités());
-            if (Liste[i].getPénalités() == 0) s.append(" tête de boeufs\n");
-            else if (Liste[i].getPénalités() == 1) s.append(" tête de boeufs\n");
-            else s.append(" têtes de boeufs\n");    
+            s.append(Liste[i].toString() + " a ramassÃ© " + Liste[i].getPÃ©nalitÃ©s());
+            if (Liste[i].getPÃ©nalitÃ©s() == 0) s.append(" tÃªte de boeufs\n");
+            else if (Liste[i].getPÃ©nalitÃ©s() == 1) s.append(" tÃªte de boeufs\n");
+            else s.append(" tÃªtes de boeufs\n");    
         }
         return s.toString();
     }
     
     /**
-     * Retourne une chaine de caracteres contenant les nombres des cartes qui vont etre posées
+     * Retourne une chaine de caracteres contenant les nombres des cartes qui vont etre posÃ©es
      * @return chaine de caracteres
     */
     private String cartesAPoser() {
     	TreeMap<Integer,String> cartes =new TreeMap<>();
-    	for (Carte c : cartesChoisies.keySet()) cartes.put(c.getNuméro(), cartesChoisies.get(c).toString());
+    	for (Carte c : cartesChoisies.keySet()) cartes.put(c.getNumÃ©ro(), cartesChoisies.get(c).toString());
     	StringBuilder s= new StringBuilder("Les cartes ");
     	int nb=1;
     	for (int i : cartes.keySet()) {
@@ -383,17 +379,17 @@ public class Partie {
     		  else if(nb==joueurs.size()-1) s.append(" et ");
     		  nb++;
     	}
-    	s.append(" vont être posées.");
+    	s.append(" vont Ãªtre posÃ©es.");
     	return s.toString();
     }
 
     /**
-     * Retourne une chaine de caracteres contenant les nombres des cartes qui ont été posées
+     * Retourne une chaine de caracteres contenant les nombres des cartes qui ont Ã©tÃ© posÃ©es
      * @return chaine de caracteres
     */
 	private String cartesPosees() {
 		TreeMap<Integer,String> cartes =new TreeMap<>();
-    	for (Carte c : cartesChoisies.keySet()) cartes.put(c.getNuméro(), cartesChoisies.get(c).toString());
+    	for (Carte c : cartesChoisies.keySet()) cartes.put(c.getNumÃ©ro(), cartesChoisies.get(c).toString());
     	StringBuilder s= new StringBuilder("Les cartes ");
     	int nb=1;
     	for (int i : cartes.keySet()) {
@@ -402,18 +398,18 @@ public class Partie {
     		  else if(nb==joueurs.size()-1) s.append(" et ");
     		  nb++;
     	}
-    	s.append(" ont été posées.");
+    	s.append(" ont Ã©tÃ© posÃ©es.");
     	return s.toString();
     }
     
 	
 	/**
-     * Retourne une chaine de caracteres contenant les 4 séries de la partie
+     * Retourne une chaine de caracteres contenant les 4 sÃ©ries de la partie
      * @return chaine de caracteres
     */
 	private String afficherSeries() {
     	StringBuilder s = new StringBuilder();
-    	for (Série sr : séries) s.append(sr.toString());
+    	for (SÃ©rie sr : sÃ©ries) s.append(sr.toString());
     	return s.toString();
     }
 
@@ -425,7 +421,7 @@ public class Partie {
             if( i==joueurs.size()-2) s.append(" et ");
             else if( i<joueurs.size()-2) s.append(", ");
         }
-        s.append(". Merci de jouer à 6 qui prend !");
+        s.append(". Merci de jouer Ã  6 qui prend !");
         return s.toString();
     }
     

@@ -16,6 +16,6 @@ Les cartes ramassées par les joueurs ne vont pas dans leur main mais sont mises
 
 Les cartes dont la valeur se termine par un 5 valent 2 ”têtes de bœufs” ; celles dont la valeur se termine par un 0 en valent 3 ; celles dont la valeur est formée par deux chiffres égaux en valent 5 et les autres cartes valent une ”tête de bœufs”. Toutefois, la carte 55 vaut 7 ”têtes de bœuf” car sa valeur se termine par 5 (2 têtes) et est composée de deux chiffres égaux (5 têtes).
 
-Pour jouer à une partie de 6 qui prend, il suffit d'écrire le nom des joueurs dans un fichier texte nommé “config.txt” et de lancer la partie. Il est préférable de lancer le programe dans un terminal.
+Pour jouer à une partie de 6 qui prend, il suffit d'écrire le nom des joueurs dans un fichier texte nommé “config.txt” situé dans le même répertoire que la classe Application et de lancer la partie. Il est préférable de lancer le programe dans un terminal.
 
 
